@@ -1,4 +1,4 @@
-const apiKey = "DEMO_KEY"; // replace with your own NASA API key if you have one
+const apiKey = "DEMO_KEY"; // replace with your NASA API key if you have one
 
 const startDateInput = document.getElementById("startDate");
 const endDateInput = document.getElementById("endDate");
@@ -127,6 +127,19 @@ function displayGallery(items) {
   });
 }
 
+function getYouTubeEmbedUrl(url) {
+  if (url.includes("youtube.com/watch?v=")) {
+    return url.replace("watch?v=", "embed/");
+  }
+
+  if (url.includes("youtu.be/")) {
+    const videoId = url.split("youtu.be/")[1];
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  return url;
+}
+
 function openModal(item) {
   let mediaContent = "";
 
@@ -134,11 +147,14 @@ function openModal(item) {
     mediaContent = `<img src="${item.hdurl || item.url}" alt="${item.title}">`;
   } else if (item.media_type === "video") {
     if (item.url.includes("youtube.com") || item.url.includes("youtu.be")) {
+      const embedUrl = getYouTubeEmbedUrl(item.url);
+
       mediaContent = `
         <iframe
-          src="${item.url}"
+          src="${embedUrl}"
           title="${item.title}"
           frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
         </iframe>
       `;
@@ -175,3 +191,7 @@ modal.addEventListener("click", (event) => {
     closeModal();
   }
 });
+
+setupDateInputs(startDateInput, endDateInput);
+showRandomFact();
+fetchSpaceImages();
